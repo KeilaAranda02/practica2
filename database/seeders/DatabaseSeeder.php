@@ -26,15 +26,21 @@ class DatabaseSeeder extends Seeder
         // Sembrar grupos
         Group::factory(3)->create();
 
-        // Sembrar niveles
-        Level::factory(3)->create(['name' => 'Oro']);
-        Level::factory(3)->create(['name' => 'Plata']);
-        Level::factory(3)->create(['name' => 'Bronce']);
+        // Crear los niveles una vez
+        $levels = ['Oro', 'Plata', 'Bronce'];
+        foreach ($levels as $level) {
+            Level::create(['name' => $level]);
+        }
 
         // Sembrar usuarios con perfiles y otros datos relacionados
-        User::factory(5)->create()->each(function ($user) {
+        User::factory(5)->create()->each(function ($user) use ($levels) {
             $profile = $user->profile()->save(Profile::factory()->make());
             $profile->location()->save(Location::factory()->make());
+
+            // Asignar un nivel aleatorio
+            $randomLevel = Level::where('name', $levels[array_rand($levels)])->first();
+            $user->level()->associate($randomLevel);
+            $user->save();
 
             $user->groups()->attach($this->array(rand(1, 3)));
 
@@ -72,10 +78,8 @@ class DatabaseSeeder extends Seeder
                 $video->comments()->save(Comment::factory()->make());
             }
         });
-
-    
-        
     }
+
     /**
      * Crea un array con valores del 1 al máximo especificado.
      *
