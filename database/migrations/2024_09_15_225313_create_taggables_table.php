@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('taggables', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->bigInteger('tag_id')->unsigned();
-            $table->bigInteger('taggable_id')->unsigned(); // Añadir esta línea
-            $table->string('taggable_type'); // Asegúrate de que esta línea está presente
+            $table->bigInteger('taggable_id')->unsigned(); 
+            $table->string('taggable_type'); 
             $table->timestamps();
 
             $table->foreign('tag_id')->references('id')->on('tags')
